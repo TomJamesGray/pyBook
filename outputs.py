@@ -10,6 +10,8 @@ def decideWhatToDo():
 		customer.makeCustomerWizzard()
 	elif decision.lower() == "h":
 		showHelp()
+	else:
+		decideWhatToDo()
 
 def showHelp():
 	print("ab - add booking")

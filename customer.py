@@ -30,7 +30,7 @@ class Customer:
 		print("Successfully created {}".format(self.name))
 		conn.close()
 
-	def getCustomerId(self):
+	def getCustomerId(self):	
 		# Retrieve customer id making sure it matches name and address
 		conn=dbConnection.connect('bookings.db')
 		try:
@@ -40,11 +40,12 @@ class Customer:
 			)
 			# Fetch just the one value
 			customerId = cursor.fetchone()[0]
-			conn.close()
 		except (sqlite3.Error,TypeError) as e:
 			print("Error: {}".format(e))
 			return "ERROR"
 			pass
+		finally:
+			conn.close()
 
 
 		return customerId

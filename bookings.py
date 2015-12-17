@@ -1,6 +1,7 @@
-import sqlite3,outputs
+import sqlite3,outputs,getConfig
 from customer import Customer
 from datetime import datetime
+from dbConnection import connect
 
 def makeBookingWizzard(name=None, address=None):
 	nameInput=input("Customer name: ")
@@ -17,7 +18,9 @@ def makeBookingWizzard(name=None, address=None):
 		makeBookingWizzard(name, address)
 	elif address != "":
 		address = addressInput
+
 	print("Name: {}, address: {}".format(name,address))
+	
 	customer = Customer(name,address)
 	customerId = Customer.getCustomerId(customer)
 	if customerId == "ERROR":
@@ -27,7 +30,7 @@ def makeBookingWizzard(name=None, address=None):
 
 	date=input("What day would you like to book (dd/mm/yyyy): ")
 	try:
-		bookingDay = datetime.strptime(date, '%d/%m/%Y')
+		bookingDate = datetime.strptime(date, '%d/%m/%Y')
 	except ValueError:
 		print("Invalid date")
 		# Keep the same name and address values,
@@ -36,8 +39,24 @@ def makeBookingWizzard(name=None, address=None):
 
 	time=input("When would you like to book: ")
 	try:
-		bookingTime = datetime.strptime(time, '%H:%M')
+		bookingTime = datetime.strptime(time, '%H:%M').time()
 	except ValueError:
 		print("Invalid time")
 
-	timeDate = date + time
+	# Concatenate date and time for easier storage
+	timeDate = datetime.combine(bookingDate,bookingTime)
+
+	reason=input("Booking reason: ")
+	makeBooking(customerId,timeDate,reason)
+
+def makeBooking(customerId,bookingDateTime,reason):
+	conn = connect()
+	try:
+		curson = conn.execute(
+			"INSERT INTO bookings (customerId,timeStampBook,reason) VALUES(?,?,?)",
+			(customerId,bookingDateTime,reason))
+		conn.commit()
+	except sqlite3.Error as e:
+		print('Error: {}'.format(e))
+	finally:
+		conn.close()
