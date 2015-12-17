@@ -1,28 +1,30 @@
-import sqlite3,outputs,getConfig
+import sqlite3,outputs,getConfig,customerHelpers
 from customer import Customer
 from datetime import datetime
 from dbConnection import connect
 
 def makeBookingWizzard(name=None, address=None):
 	nameInput=input("Customer name: ")
+
 	# Check if no input and no former value used
 	if nameInput == "" and name == "":
 		print("No name provided")
 		makeBookingWizzard(name, address)
 	elif name != "":
 		name = nameInput
+		# Check if this person is not the only person with the name
+		# then get address input
+		if customerHelpers.customerAmountLookup('name',name) >= 2:
+			addressInput=input("Customer address: ")
+			if addressInput == "" and address == "":
+				print("No address provided")
+				makeBookingWizzard(name, address)
+			elif address != "":
+				address = addressInput
 
-	addressInput=input("Customer address: ")
-	if addressInput == "" and address == "":
-		print("No address provided")
-		makeBookingWizzard(name, address)
-	elif address != "":
-		address = addressInput
-
-	print("Name: {}, address: {}".format(name,address))
+	# print("Name: {}, address: {}".format(name,address))
 	
-	customer = Customer(name,address)
-	customerId = Customer.getCustomerId(customer)
+	customerId = customerHelpers.idLookup(name)
 	if customerId == "ERROR":
 		outputs.decideWhatToDo();
 
