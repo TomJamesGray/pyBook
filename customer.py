@@ -47,4 +47,5 @@ class Customer:
 		finally:
 			conn.close()
 
+
 		return customerId
