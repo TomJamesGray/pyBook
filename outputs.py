@@ -8,9 +8,10 @@ def decideWhatToDo():
 		bookings.makeBookingWizzard()
 	elif decision.lower() == "ac":
 		customer.makeCustomerWizzard()
-	elif decision.lower() == "lc":
-		customer.listCustomers()
-		print("TestPlz")
+	elif decision.lower().startswith('lc'):
+		# Remove lc (i.e remove first 2 chars) to leave arguments
+		args = decision[2:]
+		customer.listCustomers(args)
 	elif decision.lower() == "h":
 		showHelp()
 	else:
