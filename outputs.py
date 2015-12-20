@@ -8,6 +8,9 @@ def decideWhatToDo():
 		bookings.makeBookingWizzard()
 	elif decision.lower() == "ac":
 		customer.makeCustomerWizzard()
+	elif decision.lower() == "lc":
+		customer.listCustomers()
+		print("TestPlz")
 	elif decision.lower() == "h":
 		showHelp()
 	else:
@@ -16,5 +19,6 @@ def decideWhatToDo():
 def showHelp():
 	print("ab - add booking")
 	print("ac - add customer")
+	print("lc - lists all customers")
 	print("h - displays this help message")
 	decideWhatToDo()

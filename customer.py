@@ -1,4 +1,5 @@
 import dbConnection, sqlite3, main
+from tabulate import tabulate
 def makeCustomerWizzard():
 	name = input("What is their name: ")
 	address = input("What is their address: ")
@@ -10,6 +11,16 @@ def makeCustomerWizzard():
 	customer.makeCustomer()
 	# Go back to main part
 	main.main()
+def listCustomers():
+	conn=dbConnection.connect('bookings.db')
+	try:
+		customers=conn.execute("SELECT * FROM customers")
+	except sqlite3.Error as e:
+		print("Error: {}".format(e))
+
+	# Print customers nicely
+	print(tabulate(customers))
+
 
 class Customer:
 	def __init__(self,name,address,telephone=None):
