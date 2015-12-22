@@ -14,7 +14,6 @@ def makeCustomerWizzard():
 	# Go back to main part
 	main.main()
 def listCustomers(argsString):
-	# def inputArgs(args):
 	conn=dbConnection.connect('bookings.db')
 	# Get args
 	args = getArgsBy(argsString,',|=')
@@ -22,7 +21,7 @@ def listCustomers(argsString):
 		try:
 			customers=conn.execute("SELECT * FROM customers")
 			print(tabulate(customers,
-				headers=['customerId','name','address','telephone'],
+				headers=['Customer id','Name','Address','Telephone'],
 				tablefmt="fancy_grid"))
 		except sqlite3.Error as e:
 			print("Error: {}".format(e))
