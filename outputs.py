@@ -12,6 +12,10 @@ def decideWhatToDo():
 		# Remove lc (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
 		customer.listCustomers(args)
+	elif decision.lower().startswith('lb'):
+		# Remove lb (i.e remove first 2 chars) to leave arguments
+		args = decision[2:]
+		bookings.listBookings(args)
 	elif decision.lower() == "h":
 		showHelp()
 	else:
