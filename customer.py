@@ -1,4 +1,4 @@
-import dbConnection, sqlite3, main
+import dbConnection,sqlite3,main
 from tabulate import tabulate
 from helpers import getArgsBy
 from getConfig import getConfPart
@@ -7,10 +7,7 @@ def makeCustomerWizzard():
 	address = input("What is their address: ")
 	telephone = input("What is their phone number: ")
 
-	# Create instance of Customer class
-	customer=Customer(name,address,telephone)
-	# Insert it into db
-	customer.makeCustomer()
+	makeCustomer(name,address,telephone)
 	# Go back to main part
 	main.main()
 def listCustomers(argsString):
@@ -62,41 +59,36 @@ def listCustomers(argsString):
 
 	# Return to start
 	main.main()
-class Customer:
-	def __init__(self,name,address,telephone=None):
-		self.name=name
-		self.address=address
-		# Telephone isn't required to allow getCustomerId
-		self.telephone=telephone
-	def makeCustomer(self):
-		# Insert Customer into database
-		conn=dbConnection.connect('bookings.db')
-		try:
-			conn.execute("INSERT INTO customers (name,address,telephone) VALUES(?,?,?)",
-				(self.name, self.address,self.telephone))
-			conn.commit()
-		except sqlite3.Error as e:
-			print('Error: {}'.format(e))
+def makeCustomer(name,address,telephone):
+	# Insert Customer into database
+	conn=dbConnection.connect('bookings.db')
+	try:
+		conn.execute("INSERT INTO customers (name,address,telephone) VALUES(?,?,?)",
+			(name, address,telephone))
+		conn.commit()
+	except sqlite3.Error as e:
+		print('Error: {}'.format(e))
 
-		print("Successfully created {}".format(self.name))
-		conn.close()
-
-	def getCustomerId(self):	
-		# Retrieve customer id making sure it matches name and address
-		conn=dbConnection.connect('bookings.db')
+	print("Successfully created {}".format(name))
+	conn.close()
+def getCustomerId(name,address=None):
+	# 
+	# TODO - 	Check amount of rows returned to see if name is unique
+	# 			Carry on moving it away from OOP, i.e fix references to functions
+	# 
+	conn=dbConnection.connect('bookings.db')
+	if address==None:
 		try:
+			# count(*) used as sqlite doesn't know rows returned without iterating
+			# over it first
 			cursor = conn.execute(
-				"SELECT customerId FROM customers WHERE name=? AND address=? LIMIT 1",
-				(self.name,self.address)
+				"SELECT count(*) FROM customers WHERE name=? LIMIT 2",
+				(name)
 			)
-			# Fetch just the one value
-			customerId = cursor.fetchone()[0]
-		except (sqlite3.Error,TypeError) as e:
+			rowsReturned = cursor.fetchone()[0]
+			print(rowsReturned)
+		except sqlite3.Error as e:
 			print("Error: {}".format(e))
-			return "ERROR"
-			pass
-		finally:
-			conn.close()
 
-
-		return customerId
+if __name__ == "__main__":
+    getCustomerId('q')

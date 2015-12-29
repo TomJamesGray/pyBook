@@ -1,5 +1,4 @@
-import sqlite3,outputs,dbConnection,main
-from customer import Customer
+import sqlite3,outputs,dbConnection,main,customer
 from datetime import datetime
 from tabulate import tabulate
 from getConfig import getConfPart
@@ -23,8 +22,8 @@ def makeBookingWizzard(name=None, address=None):
 
 	print("Name: {}, address: {}".format(name,address))
 	
-	customer = Customer(name,address)
-	customerId = Customer.getCustomerId(customer)
+	# customer = Customer(name,address)
+	customerId = getCustomerId(name,address)
 	if customerId == "ERROR":
 		outputs.decideWhatToDo();
 
