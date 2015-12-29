@@ -6,26 +6,32 @@ from helpers import getArgsBy
 
 def makeBookingWizzard(name=None, address=None):
 	nameInput=input("Customer name: ")
+
 	# Check if no input and no former value used
 	if nameInput == "" and name == "":
 		print("No name provided")
 		makeBookingWizzard(name, address)
-	elif name != "":
-		name = nameInput
 
-	addressInput=input("Customer address: ")
-	if addressInput == "" and address == "":
-		print("No address provided")
-		makeBookingWizzard(name, address)
-	elif address != "":
-		address = addressInput
+	name = nameInput
+	customerId = customer.getCustomerId(name)
 
-	print("Name: {}, address: {}".format(name,address))
-	
-	# customer = Customer(name,address)
-	customerId = getCustomerId(name,address)
-	if customerId == "ERROR":
-		outputs.decideWhatToDo();
+	if customerId == "ERROR:nameNotUnique":
+		# Get address input as well as name is not unique
+		addressInput=input("Customer address: ")
+		if addressInput == "" and address == "":
+			print("No address provided")
+			makeBookingWizzard(name, address)
+		elif address != "":
+			address = addressInput
+
+		print("Name: {}, address: {}".format(name,address))
+		
+		customerId = customer.getCustomerId(name,address)
+		if customerId == "ERROR":
+			outputs.decideWhatToDo();
+	elif customerId == "ERROR:noMatchingCustomer":
+		print("Name not recognised")
+		makeBookingWizzard(None,address)
 
 	print(customerId)
 
