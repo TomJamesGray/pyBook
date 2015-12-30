@@ -1,5 +1,5 @@
 #pyBook
-###A command line booking system that uses sqlite and python to manage and store customer and booking information
+###A command line booking system to manage and store customer and booking information
 
 Commands:
 * ab - Adds booking
@@ -8,6 +8,7 @@ Commands:
 * lb - Lists bookings
 * h  - Displays a help message
 
-Arguments can be used on lc and lb in the form 'lc name=Tom Gray'
+Arguments can be used on lc and lb in the form `lc name=Tom Gray`
+
 Multiple arguments can also be used if seperated by commas 
-e.g 'lc name=Tom Gray,address=An example address'
+e.g `lc name=Tom Gray,address=An example address`
