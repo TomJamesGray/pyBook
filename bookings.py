@@ -7,31 +7,47 @@ from helpers import getArgsBy
 def makeBookingWizzard(name=None, address=None):
 	nameInput=input("Customer name: ")
 
-	# Check if no input and no former value used
-	if nameInput == "" and name == "":
+	if name != None and nameInput == "":
+		print("Using name '{}' from previous add booking".format(name))
+		print("And any address from previous add booking")
+	elif nameInput != "":
+		name = nameInput
+		address=None
+	else:
 		print("No name provided")
-		makeBookingWizzard(name, address)
-
-	name = nameInput
-	customerId = customer.getCustomerId(name)
+		makeBookingWizzard(name,address)
+	# Use address here as it may be from a previous run of 
+	# the function where the user may have put in an invalid date for example
+	customerId = customer.getCustomerId(name,address)
 
 	if customerId == "ERROR:nameNotUnique":
-		# Get address input as well as name is not unique
+		# Get address input as well, as name is not unique
 		addressInput=input("Customer address: ")
-		if addressInput == "" and address == "":
-			print("No address provided")
-			makeBookingWizzard(name, address)
-		elif address != "":
+		if address != None:
+			print("Using address {} from previous add booking".format(address))
+		elif addressInput != "":
 			address = addressInput
+		else:
+			print("No address provided")
+			makeBookingWizzard(name,address)
 
-		print("Name: {}, address: {}".format(name,address))
 		
 		customerId = customer.getCustomerId(name,address)
-		if customerId == "ERROR":
-			outputs.decideWhatToDo();
+		if customerId == "ERROR:nameAndAddressNotUnique":
+			print("Multiple records with the same name and address have been found\n")
+			print("Possible duplicate records?")
+			outputs.decideWhatToDo()
+		elif customerId == "Error:noMatchingCustomer":
+			print("No customer found")
+			outputs.decideWhatToDo()
+		elif str(customerId).startswith('ERROR'):
+			# Catch errors, all will be sqlite related, unless a new
+			# error code is used in getCustomerId() and hasn't been added here
+			print("An unknown error occured: {}".format(e))
+			outputs.decideWhatToDo()
 	elif customerId == "ERROR:noMatchingCustomer":
 		print("Name not recognised")
-		makeBookingWizzard(None,address)
+		outputs.decideWhatToDo()
 
 	print(customerId)
 
@@ -49,6 +65,7 @@ def makeBookingWizzard(name=None, address=None):
 		bookingTime = datetime.strptime(time, '%H:%M').time()
 	except ValueError:
 		print("Invalid time")
+		makeBookingWizzard(name,address)
 
 	# Concatenate date and time for easier storage
 	timeDate = datetime.combine(bookingDate,bookingTime)

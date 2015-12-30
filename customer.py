@@ -101,6 +101,7 @@ def getCustomerId(name,address=None):
 				return "ERROR:noMatchingCustomer"
 		except sqlite3.Error as e:
 			print("Error: {}".format(e))
+			return "ERROR"
 		finally:
 			conn.close()
 	elif address != None:
@@ -127,6 +128,7 @@ def getCustomerId(name,address=None):
 				return "ERROR:noMatchingCustomer"
 		except sqlite3.Error as e:
 			print("Error: {}".format(e))
+			return "ERROR"
 		finally:
 			conn.close()
 if __name__ == '__main__':
