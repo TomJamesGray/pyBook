@@ -2,13 +2,14 @@
 # import helpers.getConfig
 from app.helpers import getConfig
 from app.customer import addCustomer,listCustomer
+from app.bookings import addBooking
 def welcome():
     print("Hello welcome to %s" % getConfig.getConfPart('name'))
 
 def decideWhatToDo():
 	decision = input("What would you like to do (h for help)?: ")
 	if decision.lower() == "ab":
-		bookings.makeBookingWizzard()
+		addBooking.wizzard()
 	elif decision.lower() == "ac":
 		addCustomer.wizzard()
 	elif decision.lower().startswith('lc'):
