@@ -1,4 +1,7 @@
-import getConfig,bookings,customer
+# import getConfig,bookings,customer
+# import helpers.getConfig
+from app.helpers import getConfig
+from app.customer import addCustomer
 def welcome():
     print("Hello welcome to %s" % getConfig.getConfPart('name'))
 
@@ -7,7 +10,7 @@ def decideWhatToDo():
 	if decision.lower() == "ab":
 		bookings.makeBookingWizzard()
 	elif decision.lower() == "ac":
-		customer.makeCustomerWizzard()
+		addCustomer.wizzard()
 	elif decision.lower().startswith('lc'):
 		# Remove lc (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
