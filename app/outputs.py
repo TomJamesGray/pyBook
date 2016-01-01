@@ -2,7 +2,7 @@
 # import helpers.getConfig
 from app.helpers import getConfig
 from app.customer import addCustomer,listCustomer
-from app.bookings import addBooking
+from app.bookings import addBooking,listBookings
 def welcome():
     print("Hello welcome to %s" % getConfig.getConfPart('name'))
 
@@ -19,7 +19,7 @@ def decideWhatToDo():
 	elif decision.lower().startswith('lb'):
 		# Remove lb (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
-		bookings.listBookings(args)
+		listBookings.list(args)
 	elif decision.lower() == "h":
 		showHelp()
 	else:
