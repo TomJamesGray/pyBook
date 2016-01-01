@@ -15,6 +15,15 @@ def list(argsString):
 				tablefmt="fancy_grid"))
 		except sqlite3.Error as e:
 			print("Error: {}".format(e))
+	elif len(args) % 2 != 0:
+		# If args length is an uneven length then there is a argument without a pair
+		# value and will mean the sql statement will get messed up
+		print("Odd number of arguments supplied")
+		print("Each argument must have a value eg. \n")
+		print("lb key=value or")
+		print("lb key=value,key2=value2\n")
+		print("There can be no lone keys or values")
+
 	else:
 		searchableArgs = getArgsBy(getConfPart('listBy','bookings').strip(),',')
 		argsFound = 0
@@ -33,13 +42,12 @@ def list(argsString):
 				args.remove(args[i+1])
 				argsFound += 1
 			else:
-				args.remove(args[i])
-				# And remove other val relating to the initial invalid value
-				# using i again as previous one has already removed 
-				args.remove(args[i])
+				print("Invalid argument: {}".format(args[i]))
+				outputs.decideWhatToDo()
 			i+=1
 			if i >= len(args):
 				unSorted = False
+			# print(args)
 		try:
 			bookings=conn.execute(
 				statement,
