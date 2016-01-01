@@ -1,6 +1,6 @@
-import outputs
+from app.outputs import *
 def main():
-	outputs.welcome()
-	outputs.decideWhatToDo()
+	welcome()
+	decideWhatToDo()
 if __name__ == "__main__":
     main()
