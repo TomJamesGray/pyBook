@@ -65,7 +65,7 @@ def getCustomerId(name,address=None):
 			return "ERROR"
 		finally:
 			conn.close()
-def getCustomerInfoFromId(customerId,attributesWanted=('name','address')):
+def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 	# Get a customers information, by default name and address
 	# From their id, the attryibutes wanted are passed in through
 	# a list
@@ -100,7 +100,7 @@ def getCustomerInfoFromId(customerId,attributesWanted=('name','address')):
 			statement,
 			(customerId,)
 		)
-		customerInfo = cursor.fetchall()
+		customerInfo = cursor.fetchone()
 		if customerInfo == [''] or customerInfo == None:
 			return "Error:noMatchingCustomer"
 		else:
