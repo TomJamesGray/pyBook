@@ -72,7 +72,7 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 	
 	statement = "SELECT "
 	if len(attributesWanted)==1:
-		statement += "? "
+		statement += attributesWanted[0]
 	elif len(attributesWanted)==0:
 		return "ERROR:noAttributesToSelect"
 	else:
