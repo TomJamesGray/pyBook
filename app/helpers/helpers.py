@@ -107,4 +107,3 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 			return customerInfo
 	except sqlite3.Error as e:
 		print("Error: {}".format(e))
-		return "ERROR"

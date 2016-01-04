@@ -1,8 +1,9 @@
 # import getConfig,bookings,customer
 # import helpers.getConfig
 from app.helpers import getConfig
+from app.helpers.helpers import getCustomerInfoFromId
 from app.customer import addCustomer,listCustomer
-from app.bookings import addBooking,listBookings
+from app.bookings import addBooking,listBookings,removeBooking
 def welcome():
     print("Hello welcome to %s" % getConfig.getConfPart('name'))
 
@@ -20,6 +21,9 @@ def decideWhatToDo():
 		# Remove lb (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
 		listBookings.list(args)
+	elif decision.lower().startswith('rb'):
+		args = decision[2:]
+		removeBooking.removeWizzard(args)
 	elif decision.lower() == "h":
 		showHelp()
 	else:
