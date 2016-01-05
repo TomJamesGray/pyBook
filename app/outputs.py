@@ -34,4 +34,5 @@ def showHelp():
 	print("ac - add customer")
 	print("lc - lists all customers")
 	print("h - displays this help message")
+	print("rb - removes a booking")
 	decideWhatToDo()
