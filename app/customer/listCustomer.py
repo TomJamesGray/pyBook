@@ -34,10 +34,8 @@ def list(argsString):
 				args.remove(args[i+1])
 				argsFound += 1
 			else:
-				args.remove(args[i])
-				# And remove other val relating to the initial invalid value
-				# using i again as previous one has already removed 
-				args.remove(args[i])
+				print("Invalid argument: {}".format(args[i]))
+				outputs.decideWhatToDo()
 			i+=1
 			if i >= len(args):
 				unSorted = False
