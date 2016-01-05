@@ -6,6 +6,7 @@ Commands:
 * ac - Adds customer
 * lc - Lists customers
 * lb - Lists bookings
+* rb - Removes a booking
 * h  - Displays a help message
 
 Arguments can be used on lc and lb in the form `lc name=Tom Gray`
