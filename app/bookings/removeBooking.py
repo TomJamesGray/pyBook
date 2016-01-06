@@ -2,7 +2,6 @@ import sqlite3
 from app.helpers.helpers import getArgsBy,getCustomerInfoFromId
 from app.helpers.getConfig import getConfPart
 from app.db import dbConnection
-from tabulate import tabulate
 from app import outputs
 # Get arguments from config file to get from which attributes a 
 # booking can be removed, then get the arguments provided by the 
