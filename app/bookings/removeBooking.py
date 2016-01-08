@@ -11,69 +11,77 @@ def removeWizzard(argsString):
 	if argsString == '' or not argsString:
 		print("No arguments provided")
 		outputs.decideWhatToDo()
-	else:
-		args = getArgsBy(argsString,',|=')
-		searchableArgs = getArgsBy(getConfPart('removeBy','bookings').strip(),',')
-		# Where clause will be used in both select and delete statement so
-		# is made up here
-		whereClause = ""
-		unChecked=True
-		argsFound=0
-		i=0
-		vals=[]
-		while unChecked:
-			if args[i] in searchableArgs:
-				if argsFound >= 1:
-					whereClause += "AND " + args[i] + '=? '
-				else:
-					whereClause += args[i] + '=?'
-				# i+1 is the value corresponding to the argument
-				# and is removed so it won't be treated as an argument
-				# in the next run
-				vals.append(args[i+1])
-				args.remove(args[i+1])
-				argsFound += 1
+	args = getArgsBy(argsString,',|=')
+	if len(args) % 2 != 0:
+		print("Insufficient arguments provided, odd number")
+	attributes = []
+	values = []
+	for i in range(0,len(args)):
+		if i%2 == 0:
+			attributes.append(args[i])
+		else:
+			values.append(args[i])
+	remove(attributes,values)
+	outputs.decideWhatToDo()
+def remove(attributes,values,confirm=True):
+	#First check that values is a list and that it has the same length
+	#As attributes
+	if not isinstance(values,list):
+		return "ERROR:valuesNotList"
+	elif len(attributes) != len(values):
+		return "ERROR:attributesLengthNotEqualValuesLength"
+	whereClause = ""
+	unChecked=True
+	argsFound,i=0,0
+	searchableArgs=getArgsBy(getConfPart('removeBy','bookings').strip(),',')
+	while unChecked:
+		if attributes[i] in searchableArgs:
+			if argsFound >= 1:
+				whereClause += "AND " + attributes[i] + '=? '
 			else:
-				print("Invalid argument: {}".format(args[i]))
-				outputs.decideWhatToDo()
-			i+=1
-			if i >= len(args):
-				unChecked = False
-	#Select the booking using the statement and make sure it is unique
-	#Then ask for confirmation before executing the DELETE statement
+				whereClause += attributes[i] + '=?'
+				argsFound += 1
+		else:
+			return "ERROR:attributeNotInSearchableArgs"
+		i+=1
+		if i >= len(attributes):
+			unChecked = False
+
 	conn = dbConnection.connect()
 	statement = "SELECT count(*),customerId FROM bookings WHERE " + whereClause + " LIMIT 2"
 	print(statement)
+	print("These are the Values: {}".format(values))
+	print(tuple(values))
 	try:
 		cursor = conn.execute(
 			statement,
-			tuple(vals),
+			tuple(values)
 		)
 		countAndCustomerId = cursor.fetchone()
+		print(countAndCustomerId)
 		if countAndCustomerId[0] == 2:
-			print("Booking not unique")
-			outputs.decideWhatToDo()
+			return "ERROR:bookingNotUnique"
 		elif countAndCustomerId[0] == 0:
-			print("No matching booking")
-			outputs.decideWhatToDo()
+			return "ERROR:noBookingFound"
 		else:
-			#There is only one booking, so confirm deletion with 
-			#customer details using their id
-			customerInfo = getCustomerInfoFromId(countAndCustomerId[1])
-			print(customerInfo)
-			print("Delete booking for {}, address {}".format(customerInfo[0],customerInfo[1]))
-			confirmDelete = input("(y/n): ")
-			if confirmDelete.lower() == "y":
+			# By defualt this will happen as confirm defualts to True
+			# However in the future this may not be desired and so can 
+			# be set to remove without customer detail confrimation
+			confirmDelete=None
+			if confirm:
+				customerInfo = getCustomerInfoFromId(countAndCustomerId[1])
+				print(customerInfo)
+				print("Delete booking for {}, address {}".format(customerInfo[0],customerInfo[1]))
+				confirmDelete = input("(y/n): ")
+			if confirmDelete.lower() == "y" or (confirm==False and confrimDelete==None):
 				deleteCursor = conn.execute(
 					"DELETE FROM bookings WHERE " + whereClause,
-					tuple(vals),
+					tuple(values),
 				)
 				conn.commit()
 			elif confirmDelete.lower() == "n":
-				outputs.decideWhatToDo()
+				return "deleteCanceled"
 			else:
-				print("Unregcognized command")
-				outputs.decideWhatToDo()
+				return "invalidInput"
 	except sqlite3.Error as e:
 		print("Error: {}".format(e))
-	outputs.decideWhatToDo()	
