@@ -21,15 +21,27 @@ def removeWizzard(argsString):
 			attributes.append(args[i])
 		else:
 			values.append(args[i])
-	remove(attributes,values)
+	try:
+		if remove(attributes,values):
+			print("Succesfully removed booking")
+		else:
+			print("No bookings deleted")
+	except ValueError as e:
+		print("Value error: {}".format(e))
+	except TypeError as e:
+		print("Type error: {}".format(e))
+	except LookupError as e:
+		print("Lookup error: {}".format(e))
+	except Exception  as e:
+		print("Error: {}".format(e))
 	outputs.decideWhatToDo()
 def remove(attributes,values,confirm=True):
 	#First check that values is a list and that it has the same length
 	#As attributes
 	if not isinstance(values,list):
-		return "ERROR:valuesNotList"
+		raise TypeError("Values not list")
 	elif len(attributes) != len(values):
-		return "ERROR:attributesLengthNotEqualValuesLength"
+		raise ValueError("Not same amount of attributes and values")
 	whereClause = ""
 	unChecked=True
 	argsFound,i=0,0
@@ -42,27 +54,23 @@ def remove(attributes,values,confirm=True):
 				whereClause += attributes[i] + '=?'
 				argsFound += 1
 		else:
-			return "ERROR:attributeNotInSearchableArgs"
+			raise ValueError("Argument is not searchable")
 		i+=1
 		if i >= len(attributes):
 			unChecked = False
 
 	conn = dbConnection.connect()
 	statement = "SELECT count(*),customerId FROM bookings WHERE " + whereClause + " LIMIT 2"
-	print(statement)
-	print("These are the Values: {}".format(values))
-	print(tuple(values))
 	try:
 		cursor = conn.execute(
 			statement,
 			tuple(values)
 		)
 		countAndCustomerId = cursor.fetchone()
-		print(countAndCustomerId)
 		if countAndCustomerId[0] == 2:
-			return "ERROR:bookingNotUnique"
+			raise LookupError("Multiple matching bookings")
 		elif countAndCustomerId[0] == 0:
-			return "ERROR:noBookingFound"
+			raise LookupError("No booking found")
 		else:
 			# By defualt this will happen as confirm defualts to True
 			# However in the future this may not be desired and so can 
@@ -70,7 +78,6 @@ def remove(attributes,values,confirm=True):
 			confirmDelete=None
 			if confirm:
 				customerInfo = getCustomerInfoFromId(countAndCustomerId[1])
-				print(customerInfo)
 				print("Delete booking for {}, address {}".format(customerInfo[0],customerInfo[1]))
 				confirmDelete = input("(y/n): ")
 			if confirmDelete.lower() == "y" or (confirm==False and confrimDelete==None):
@@ -80,8 +87,9 @@ def remove(attributes,values,confirm=True):
 				)
 				conn.commit()
 			elif confirmDelete.lower() == "n":
-				return "deleteCanceled"
+				return False
 			else:
-				return "invalidInput"
+				return False
+		return True
 	except sqlite3.Error as e:
-		print("Error: {}".format(e))
+		raise sqlite3.Error(e)
