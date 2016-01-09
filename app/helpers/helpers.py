@@ -94,7 +94,6 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 	# And is marked so in the db
 	statement += " FROM customers WHERE customerId=?"
 	conn = dbConnection.connect()
-	print(statement)
 	try:
 		cursor = conn.execute(
 			statement,
