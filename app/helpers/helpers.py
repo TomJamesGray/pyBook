@@ -74,7 +74,7 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 	if len(attributesWanted)==1:
 		statement += attributesWanted[0]
 	elif len(attributesWanted)==0:
-		return "ERROR:noAttributesToSelect"
+		raise ValueError("No attributes to select")
 	else:
 		i=0
 		while i<len(attributesWanted):
@@ -88,7 +88,7 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 				else:
 					statement += attributesWanted[i]
 			else:
-				return "ERROR:unknownAttributeWanted"
+				raise ValueError("Unknown attribute required")
 			i += 1
 	# No need to check if customer is unique as id is used
 	# And is marked so in the db
@@ -101,7 +101,7 @@ def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
 		)
 		customerInfo = cursor.fetchone()
 		if customerInfo == [''] or customerInfo == None:
-			return "Error:noMatchingCustomer"
+			raise LookupError("No matching customer found")
 		else:
 			return customerInfo
 	except sqlite3.Error as e:
