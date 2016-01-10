@@ -77,7 +77,18 @@ def remove(attributes,values,confirm=True):
 			# be set to remove without customer detail confrimation
 			confirmDelete=None
 			if confirm:
-				customerInfo = getCustomerInfoFromId(countAndCustomerId[1])
+				try:
+					customerInfo = getCustomerInfoFromId(countAndCustomerId[1])
+				except ValueError as e:
+					print("Value error: {}".format(e))
+					outputs.decideWhatToDo()
+				except LookupError as e:
+					print("Lookup error: {}".format(e))
+					outputs.decideWhatToDo()
+				except Exception as e:
+					print("Unexpected error: {}".format(e))
+					outputs.decideWhatToDo()
+
 				print("Delete booking for {}, address {}".format(customerInfo[0],customerInfo[1]))
 				confirmDelete = input("(y/n): ")
 			if confirmDelete.lower() == "y" or (confirm==False and confrimDelete==None):
