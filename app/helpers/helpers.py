@@ -9,33 +9,28 @@ def getArgsBy(argString,regExp,strip=True):
 
 	return args
 
-def getCustomerId(name,address=None):
+def getCustomerId(name,address=None,limit=2):
 	conn=dbConnection.connect()
 	if address == None:
 		try:
 			# count(*) used as sqlite doesn't know rows returned without iterating
 			# over it first
-			# AND comma at end of name makes it a tuple, otherwise sql complains
 			cursor = conn.execute(
-				"SELECT count(*) FROM customers WHERE name=? LIMIT 2",
-				(name,)
+				"SELECT count(*) FROM customers WHERE name=? LIMIT ?",
+				(name,limit)
 			)
 			rowsReturned = cursor.fetchone()[0]
-			if rowsReturned == 2:
-				return "ERROR:nameNotUnique"
-			elif rowsReturned == 1:
+			if rowsReturned > 0:
 			# Get actual customer id
-				# cursor = dbConnection.connect('bookings.db')
 				cursor = conn.execute(
-					"SELECT customerId FROM  customers WHERE name=?",
-					(name,)
+					"SELECT customerId FROM customers WHERE name=? LIMIT ?",
+					(name,limit)
 				)
-				return cursor.fetchone()[0]
+				return cursor.fetchall()
 			else:
-				return "ERROR:noMatchingCustomer"
+				raise LookupError("No customer found")
 		except sqlite3.Error as e:
-			print("Error: {}".format(e))
-			return "ERROR"
+			raise sqlite3.Error(e)
 		finally:
 			conn.close()
 	elif address != None:
@@ -44,25 +39,22 @@ def getCustomerId(name,address=None):
 			# But less likely to happen as it's v. unlikely two customers
 			# will have the same name and address
 			cursor = conn.execute(
-				"SELECT count(*) FROM customers WHERE name=? AND address=? LIMIT 2",
-				(name,address)
+				"SELECT count(*) FROM customers WHERE name=? AND address=? LIMIT ?",
+				(name,address,limit)
 			)
 			rowsReturned = cursor.fetchone()[0]
-			if rowsReturned == 2:
-				return "ERROR:nameAndAddressNotUnique"
-			elif rowsReturned == 1:
+			if rowsReturned > 0:
 				# Get actual customer id
 				# cursor = dbConnection.connect('bookings.db')
 				cursor = conn.execute(
-					"SELECT customerId FROM  customers WHERE name=? AND address=?",
-					(name,address)
+					"SELECT customerId FROM  customers WHERE name=? AND address=? LIMIT ?",
+					(name,address,limit)
 				)
-				return cursor.fetchone()[0]
+				return cursor.fetchall()
 			else:
-				return "ERROR:noMatchingCustomer"
+				raise LookupError("No customer found")
 		except sqlite3.Error as e:
-			print("Error: {}".format(e))
-			return "ERROR"
+			raise sqlite3.Error(e)
 		finally:
 			conn.close()
 def getCustomerInfoFromId(customerId,attributesWanted=['name','address']):
