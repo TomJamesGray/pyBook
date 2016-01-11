@@ -17,9 +17,19 @@ def wizzard(name=None, address=None):
 		wizzard(name,address)
 	# Use address here as it may be from a previous run of 
 	# the function where the user may have put in an invalid date for example
-	customerId = helpers.getCustomerId(name,address)
+	try:
+		customerId = helpers.getCustomerId(name,address)
+	except LookupError as e:
+		print("Lookup error: {}".format(e))
+		outputs.decideWahtToDo()
+	except sqlite3.Error as e:
+		print("Sqlite error: {}".format(e))
+		outputs.decideWhatToDo()
+	except Exception as e:
+		print("An unexpected error occured: {}".format(e))
+		outputs.decideWhatToDo()
 
-	if customerId == "ERROR:nameNotUnique":
+	if len(customerId) > 1:
 		# Get address input as well, as name is not unique
 		addressInput=input("Customer address: ")
 		if address != None:
@@ -29,26 +39,19 @@ def wizzard(name=None, address=None):
 		else:
 			print("No address provided")
 			wizzard(name,address)
-
-		
-		customerId = helpers.getCustomerId(name,address)
-		if customerId == "ERROR:nameAndAddressNotUnique":
-			print("Multiple records with the same name and address have been found\n")
-			print("Possible duplicate records?")
+	
+		try:
+			customerId = helpers.getCustomerId(name,address)
+		except LookupError as e:
+			print("Lookup error: {}".format(e))
+			outputs.decideWahtToDo()
+		except sqlite3.Error as e:
+			print("Sqlite error: {}".format(e))
 			outputs.decideWhatToDo()
-		elif customerId == "Error:noMatchingCustomer":
-			print("No customer found")
+		except Exception as e:
+			print("An unexpected error occured: {}".format(e))
 			outputs.decideWhatToDo()
-		elif str(customerId).startswith('ERROR'):
-			# Catch errors, all will be sqlite related, unless a new
-			# error code is used in getCustomerId() and hasn't been added here
-			print("An unknown error occured: {}".format(e))
-			outputs.decideWhatToDo()
-	elif customerId == "ERROR:noMatchingCustomer":
-		print("Name not recognised")
-		outputs.decideWhatToDo()
-
-	print(customerId)
+	print(customerId[0][0])
 
 	date=input("What day would you like to book (dd/mm/yyyy): ")
 	try:
@@ -70,7 +73,7 @@ def wizzard(name=None, address=None):
 	timeDate = datetime.combine(bookingDate,bookingTime)
 
 	reason=input("Booking reason: ")
-	makeBooking(customerId,timeDate,reason)
+	makeBooking(customerId[0][0],timeDate,reason)
 	# Go back to start
 	outputs.decideWhatToDo()
 def makeBooking(customerId,bookingDateTime,reason):
