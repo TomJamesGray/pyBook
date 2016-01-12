@@ -51,8 +51,6 @@ def wizzard(name=None, address=None):
 		except Exception as e:
 			print("An unexpected error occured: {}".format(e))
 			outputs.decideWhatToDo()
-	print(customerId[0][0])
-
 	date=input("What day would you like to book (dd/mm/yyyy): ")
 	try:
 		bookingDate = datetime.strptime(date, '%d/%m/%Y')
