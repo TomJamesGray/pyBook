@@ -62,18 +62,24 @@ def list(argsString):
 	outputs.decideWhatToDo()
 def listAvailable(argsString):
 	# If args is blank then assume that today was wanted
-	args = getArgsBy(argsString,',|=')
+	args = getArgsBy(argsString,',|=| ')
 	conn = dbConnection.connect()
 	openTimes = getArgsBy(getConfPart('openTimes'),',')
 	bookingLength = getConfPart('bookingLength')
 	try:
 		openTime = datetime.strptime(openTimes[0],'%H:%M')
 		closeTime = datetime.strptime(openTimes[1],'%H:%M')
-		if args == ['']:
+		if args == [''] or args == ['today']:
 			date = datetime.today().strftime('%Y-%m-%d')
-		else:
-			#Attempt to use date from args
+		elif len(args) == 1:
+			#Use date from args
 			date = datetime.strptime(args[0],'%Y-%m-%d').date()
+		elif len(args) == 3:
+			#Use date from args and get and use time args
+			date = datetime.strptime(args[0],'%Y-%m-%d').date()
+			if args[1] == 'times':
+				openTime = datetime.strptime(getArgsBy(args[2],'-')[0],'%H:%M')
+				closeTime = datetime.strptime(getArgsBy(args[2],'-')[1],'%H:%M')
 	except ValueError:
 		print("Invalid 'openTimes' in config.ini")
 		outputs.decideWhatToDo()
