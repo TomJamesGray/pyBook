@@ -6,6 +6,7 @@ Commands:
 * ac - Adds customer
 * lc - Lists customers
 * lb - Lists bookings
+* lba - Lists available bookings
 * rb - Removes a booking
 * h  - Displays a help message
 
