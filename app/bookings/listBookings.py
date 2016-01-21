@@ -73,18 +73,18 @@ def listAvailable(argsString):
 			date = datetime.today().strftime('%Y-%m-%d')
 		else:
 			#Attempt to use date from args
-			date = datetime.strptime(args[0],'%Y-%m-%d').time()
+			date = datetime.strptime(args[0],'%Y-%m-%d').date()
 	except ValueError:
 		print("Invalid 'openTimes' in config.ini")
 		outputs.decideWhatToDo()
 	cursor = conn.execute(
 		"SELECT timeStampBook FROM bookings WHERE timeStampBook LIKE ?",
-		(date+'%',)
+		(str(date)+'%',)
 	)
 	bookings = cursor.fetchall()
 	bookingTimes = []
 	for i in range(0,len(bookings)):
-		#Remove date and seconds and append to booking times
+		#Remove date and append to booking times
 		bookingTimes.append(bookings[i][0][11:])
 	curTime = openTime
 	while curTime <= closeTime:
