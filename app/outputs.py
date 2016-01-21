@@ -13,10 +13,9 @@ def decideWhatToDo():
 		addBooking.wizzard()
 	elif decision.lower() == "ac":
 		addCustomer.wizzard()
-	elif decision.lower().startswith('lc'):
-		# Remove lc (i.e remove first 2 chars) to leave arguments
-		args = decision[2:]
-		listCustomer.list(args)
+	elif decision.lower().startswith('lba'):
+		args = decision[3:]
+		listBookings.listAvailable(args)
 	elif decision.lower().startswith('lb'):
 		# Remove lb (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]

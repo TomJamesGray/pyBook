@@ -4,6 +4,7 @@ from app.helpers.getConfig import getConfPart
 from tabulate import tabulate
 from app import outputs
 from app.db import dbConnection
+from datetime import datetime,timedelta
 def list(argsString):
 	conn = dbConnection.connect()
 	args = getArgsBy(argsString,',|=')
@@ -35,7 +36,7 @@ def list(argsString):
 		while unSorted:
 			if args[i] in searchableArgs:
 				if argsFound >= 1:
-					statement += "AND " + args[i] + '=? '	
+					statement += "AND " + args[i] + '=? '
 				else:
 					statement += args[i] + '=? '
 				vals.append(args[i+1])
@@ -59,3 +60,37 @@ def list(argsString):
 			print("Error: {}".format(e))
 	# Go back to start
 	outputs.decideWhatToDo()
+def listAvailable(argsString):
+	# If args is blank then assume that today was wanted
+	args = getArgsBy(argsString,',|=')
+	conn = dbConnection.connect()
+	openTimes = getArgsBy(getConfPart('openTimes'),',')
+	bookingLength = getConfPart('bookingLength')
+	try:
+		openTime = datetime.strptime(openTimes[0],'%H:%M')
+		closeTime = datetime.strptime(openTimes[1],'%H:%M')
+		if args == ['']:
+			date = datetime.today().strftime('%Y-%m-%d')
+		else:
+			#Attempt to use date from args
+			date = datetime.strptime(args[0],'%Y-%m-%d').time()
+	except ValueError:
+		print("Invalid 'openTimes' in config.ini")
+		outputs.decideWhatToDo()
+	cursor = conn.execute(
+		"SELECT timeStampBook FROM bookings WHERE timeStampBook LIKE ?",
+		(date+'%',)
+	)
+	bookings = cursor.fetchall()
+	bookingTimes = []
+	for i in range(0,len(bookings)):
+		#Remove date and seconds and append to booking times
+		bookingTimes.append(bookings[i][0][11:])
+	curTime = openTime
+	while curTime <= closeTime:
+		#Loop through bookings, increment 1 bookingLength at a time
+		#If it matches a booking then don't add that time to the list
+		if str(curTime.time()) not in bookingTimes:
+			print("Aavailable: {}".format(curTime.time()))
+		curTime = curTime + timedelta(minutes=int(bookingLength))
+	outputs.decideWhatToDo() 
