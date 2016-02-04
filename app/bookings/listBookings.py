@@ -70,22 +70,23 @@ def listAvailable(argsString):
 		openTime = datetime.strptime(openTimes[0],'%H:%M')
 		closeTime = datetime.strptime(openTimes[1],'%H:%M')
 		if args == [''] or args == ['today']:
-			date = datetime.today().strftime('%Y-%m-%d')
+			date = datetime.today()
 		elif len(args) == 1:
 			#Use date from args
-			date = datetime.strptime(args[0],'%Y-%m-%d').date()
+			date = datetime.strptime(args[0],'%d/%m/%Y').date()
 		elif len(args) == 3:
 			#Use date from args and get and use time args
-			date = datetime.strptime(args[0],'%Y-%m-%d').date()
+			date = datetime.strptime(args[0],'%d/%m/%Y').date()
 			if args[1] == 'times':
 				openTime = datetime.strptime(getArgsBy(args[2],'-')[0],'%H:%M')
 				closeTime = datetime.strptime(getArgsBy(args[2],'-')[1],'%H:%M')
-	except ValueError:
-		print("Invalid 'openTimes' in config.ini")
+	except ValueError as e:
+		print("Error getting date: {}".format(e))
 		outputs.decideWhatToDo()
+	print(date.strftime('%Y-%m-%d'))	
 	cursor = conn.execute(
 		"SELECT timeStampBook FROM bookings WHERE timeStampBook LIKE ?",
-		(str(date)+'%',)
+		(str(date.strftime('%Y-%m-%d'))+'%',)
 	)
 	bookings = cursor.fetchall()
 	bookingTimes = []
