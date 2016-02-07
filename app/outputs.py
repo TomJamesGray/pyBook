@@ -21,6 +21,9 @@ def decideWhatToDo():
 		# Remove lb (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
 		listBookings.list(args)
+	elif decision.lower().startswith('lc'):
+		args = decision[2:]
+		listCustomer.list(args)
 	elif decision.lower().startswith('rb'):
 		args = decision[2:]
 		removeBooking.removeWizzard(args)
