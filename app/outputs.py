@@ -40,6 +40,7 @@ def showHelp():
 	print("lc - lists all customers")
 	print("lb - lists all bookings")
 	print("lba - lists available bookings")
-	print("h - displays this help message")
 	print("rb - removes a booking")
+	print("h - displays this help message")
+	print("exit - exits the programme")
 	decideWhatToDo()
