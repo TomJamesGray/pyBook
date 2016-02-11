@@ -42,5 +42,5 @@ def showHelp():
 	print("lba - lists available bookings")
 	print("rb - removes a booking")
 	print("h - displays this help message")
-	print("exit - exits the programme")
+	print("exit - exits the program")
 	decideWhatToDo()
