@@ -20,7 +20,7 @@ def decideWhatToDo():
 	elif decision.lower().startswith('lb'):
 		# Remove lb (i.e remove first 2 chars) to leave arguments
 		args = decision[2:]
-		listBookings.list(args)
+		listBookings.listWizzard(args)
 	elif decision.lower().startswith('lc'):
 		args = decision[2:]
 		listCustomer.list(args)
