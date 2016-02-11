@@ -9,7 +9,10 @@ def listWizzard(argsString):
 	args = getArgsBy(argsString, ',|=')
 	if args == [''] or not args:
 		getBookings({})
-		#Handle the data and print it out nicely
+		try:
+			bookings = getBookings({})
+		except sqlite3.Error as e:
+			print("Sqlite error occured: {}".format(e))
 	elif len(args) % 2 != 0:
 		# If args length is an uneven length then there is a argument without a pair
 		# value and will mean the sql statement will get messed up
@@ -30,19 +33,25 @@ def listWizzard(argsString):
 			else:
 				print("Invalid argument: {}".format(args[i]))
 				outputs.decideWhatToDo()
-		getBookings(argsDict)
+		try:
+			bookings = getBookings(argsDict)
+		except sqlite3.Error as e:
+			print("Sqlite error occured: {}".format(e))
+
+	print(tabulate(bookings,
+		headers=['Booking id','Customer id','Time','Reason'],
+		tablefmt="fancy_grid"))
+	outputs.decideWhatToDo()
 def getBookings(argsDict):
 	# Returns a list with all the bookings matching the parameters provided in the
 	# dictionary. If no bookings are found it will return an empty list. This fuction
 	# doesn't check whether the parameters are allowed in config.ini	
-	print(argsDict)
-#	statement = "SELECT * FROM bookings WHERE "
-	
+	valsList = []
 	if len(argsDict) == 0:
 		statement = "SELECT * FROM bookings"
+		
 	else:
 		i = 0
-		valsList = []
 		statement = "SELECT * FROM bookings WHERE "
 		for key,value in argsDict.items():
 			if i >= 1:
@@ -51,9 +60,17 @@ def getBookings(argsDict):
 				statement += str(key) + "=? "
 			valsList.append(value)
 			i += 1
-			print(valsList)
-	print(statement)
-	outputs.decideWhatToDo()	
+	try:
+		conn = dbConnection.connect()
+		if len(valsList) == 0:
+			cursor = conn.execute(statement)
+		else:
+			cursor = conn.execute(
+				statement,
+				valsList)
+		return cursor.fetchall()
+	except sqlite3.Error:
+		raise
 def list(argsString):
 	conn = dbConnection.connect()
 	args = getArgsBy(argsString,',|=')
