@@ -5,6 +5,72 @@ from tabulate import tabulate
 from app import outputs
 from app.db import dbConnection
 from datetime import datetime,timedelta
+def listWizzard(argsString):
+	args = getArgsBy(argsString, ',|=')
+	if args == [''] or not args:
+		getBookings({})
+		try:
+			bookings = getBookings({})
+		except sqlite3.Error as e:
+			print("Sqlite error occured: {}".format(e))
+	elif len(args) % 2 != 0:
+		# If args length is an uneven length then there is a argument without a pair
+		# value and will mean the sql statement will get messed up
+		print("Odd number of arguments supplied")
+		print("Each argument must have a value eg. \n")
+		print("lb key=value or")
+		print("lb key=value,key2=value2\n")
+		print("There can be no lone keys or values")
+	else:
+		# Check the arguments are valid then put them into a dictionary to be passed
+		# to getBookings()
+		searchableArgs = getArgsBy(getConfPart('listBy','bookings').strip(),',')
+		argsDict = {}
+		# Iterate by 2 to ignore the values of the args
+		for i in range(0,len(args),2):
+			if args[i] in searchableArgs:
+				argsDict[args[i]] = args[i+1]
+			else:
+				print("Invalid argument: {}".format(args[i]))
+				outputs.decideWhatToDo()
+		try:
+			bookings = getBookings(argsDict)
+		except sqlite3.Error as e:
+			print("Sqlite error occured: {}".format(e))
+
+	print(tabulate(bookings,
+		headers=['Booking id','Customer id','Time','Reason'],
+		tablefmt="fancy_grid"))
+	outputs.decideWhatToDo()
+def getBookings(argsDict):
+	# Returns a list with all the bookings matching the parameters provided in the
+	# dictionary. If no bookings are found it will return an empty list. This fuction
+	# doesn't check whether the parameters are allowed in config.ini	
+	valsList = []
+	if len(argsDict) == 0:
+		statement = "SELECT * FROM bookings"
+		
+	else:
+		i = 0
+		statement = "SELECT * FROM bookings WHERE "
+		for key,value in argsDict.items():
+			if i >= 1:
+				statement += "AND " + key + "=? "
+			else:
+				statement += str(key) + "=? "
+			valsList.append(value)
+			i += 1
+	try:
+		conn = dbConnection.connect()
+		if len(valsList) == 0:
+			cursor = conn.execute(statement)
+		else:
+			cursor = conn.execute(
+				statement,
+				valsList)
+		return cursor.fetchall()
+	except sqlite3.Error:
+		raise
 def list(argsString):
 	conn = dbConnection.connect()
 	args = getArgsBy(argsString,',|=')
