@@ -42,7 +42,7 @@ def listWizzard(argsString):
 		headers=['Booking id','Customer id','Time','Reason'],
 		tablefmt="fancy_grid"))
 	outputs.decideWhatToDo()
-def getBookings(argsDict):
+def getBookings(argsDict,likeElems=None):
 	# Returns a list with all the bookings matching the parameters provided in the
 	# dictionary. If no bookings are found it will return an empty list. This fuction
 	# doesn't check whether the parameters are allowed in config.ini	
@@ -55,9 +55,10 @@ def getBookings(argsDict):
 		statement = "SELECT * FROM bookings WHERE "
 		for key,value in argsDict.items():
 			if i >= 1:
-				statement += "AND " + key + "=? "
+				#If i needs to be queried by like then put 'LIKE' in statement else use normal '='
+				statement += "AND " + key +("LIKE ? " if (i in likeElems) else'=? ')
 			else:
-				statement += str(key) + "=? "
+				statement += key + ("LIKE ? " if (i in likeElems) else"=? ")
 			valsList.append(value)
 			i += 1
 	try:
