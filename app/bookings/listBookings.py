@@ -42,7 +42,7 @@ def listWizzard(argsString):
 		headers=['Booking id','Customer id','Time','Reason'],
 		tablefmt="fancy_grid"))
 	outputs.decideWhatToDo()
-def getBookings(argsDict,likeElems=None):
+def getBookings(argsDict,likeElems=[]):
 	# Returns a list with all the bookings matching the parameters provided in the
 	# dictionary. If no bookings are found it will return an empty list. This fuction
 	# doesn't check whether the parameters are allowed in config.ini	
