@@ -58,7 +58,7 @@ def getBookings(argsDict,likeElems=None):
 				#If i needs to be queried by like then put 'LIKE' in statement else use normal '='
 				statement += "AND " + key +("LIKE ? " if (i in likeElems) else'=? ')
 			else:
-				statement += key + ("LIKE ? " if (i in likeElems) else"=? ")
+				statement += key + (" LIKE ? " if (i in likeElems) else"=? ")
 			valsList.append(value)
 			i += 1
 	try:
@@ -121,15 +121,13 @@ def listAvailable(argsString):
 		print("Error getting date: {}".format(e))
 		outputs.decideWhatToDo()
 	print(date.strftime('%Y-%m-%d'))
-	cursor = conn.execute(
-		"SELECT timeStampBook FROM bookings WHERE timeStampBook LIKE ?",
-		(str(date.strftime('%Y-%m-%d'))+'%',)
-	)
-	bookings = cursor.fetchall()
+	#timeStampBook is to be queried by LIKE hence the [0] as it's the first elem in the dict
+	bookings = getBookings({'timeStampBook':str(date.strftime('%Y-%m-%d'))+'%'},[0])
 	bookingTimes = []
 	for i in range(0,len(bookings)):
 		#Remove date and append to booking times
-		bookingTimes.append(bookings[i][0][11:])
+		print(i)
+		bookingTimes.append(bookings[i-1][2][11:])
 	curTime = openTime
 	while curTime <= closeTime:
 		#Loop through bookings, increment 1 bookingLength at a time
