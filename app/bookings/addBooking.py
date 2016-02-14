@@ -1,6 +1,7 @@
 import sqlite3
 from app.db import dbConnection
 from app.helpers import helpers
+from app.bookings import listBookings
 from datetime import datetime
 from app import outputs
 def wizzard(name=None, address=None):
@@ -69,7 +70,12 @@ def wizzard(name=None, address=None):
 
 	# Concatenate date and time for easier storage
 	timeDate = datetime.combine(bookingDate,bookingTime)
-
+	#Check if a booking at the same time has already been made
+	if listBookings.getBookings({'timeStampBook':timeDate}) != []:
+		print("A booking already exists at this time")
+		doubleBookVerif = input("Would you like to double book this time?(y/n)")
+		if doubleBookVerif.lower() != "y":
+			wizzard(name,address)
 	reason=input("Booking reason: ")
 	makeBooking(customerId[0][0],timeDate,reason)
 	# Go back to start
