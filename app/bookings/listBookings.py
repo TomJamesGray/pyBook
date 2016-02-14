@@ -80,26 +80,38 @@ def listAvailable(argsString):
 	try:
 		openTime = datetime.strptime(openTimes[0],'%H:%M')
 		closeTime = datetime.strptime(openTimes[1],'%H:%M')
-		if args == [''] or 'today' in args:
+		#If 'today' is supplied as an argument then change it to be equal to the actual date
+		if 'today' in args:
+			args = [arg.replace('today',datetime.today().strftime('%d/%m/%Y')) for arg in args]
+		if args == ['']:
 			date = datetime.today()
 		elif len(args) == 1:
 			#Use date from args, ValueError will be made if invalid date is used
 			date = datetime.strptime(args[0],'%d/%m/%Y').date()
 		elif len(args) == 2:
 			#Just 'times' supplied, so use that and todays date
-			print("Two args")
 			date = datetime.today()
 			if args[0] == 'times':
 				openTime = datetime.strptime(getArgsBy(args[1],'-')[0],'%H:%M')
 				closeTime = datetime.strptime(getArgsBy(args[1],'-')[1],'%H:%M')
 			else:
 				print("Invalid argument '{}'  supplied, was expecting times".format(args[0]))
+				outputs.decideWhatToDo()
 		elif len(args) == 3:
 			#Use date from args and get and use time args
-			date = datetime.strptime(args[0],'%d/%m/%Y').date()
 			if args[1] == 'times':
+				# In form `lba 1/1/1970 times=0:00-5:00`
+				date = datetime.strptime(args[0],'%d/%m/%Y').date()
 				openTime = datetime.strptime(getArgsBy(args[2],'-')[0],'%H:%M')
 				closeTime = datetime.strptime(getArgsBy(args[2],'-')[1],'%H:%M')
+			elif args[0] == 'times':
+				# In form `lba times=0:00-5:00 1/1/1970`
+				date = datetime.strptime(args[2],'%d/%m/%Y').date()
+				openTime = datetime.strptime(getArgsBy(args[1],'-')[0],'%H:%M')
+				closeTime = datetime.strptime(getArgsBy(args[1],'-')[1],'%H:%M')
+			else:
+				print("Expected times argument, none given")
+				outputs.decideWhatToDo()
 		else:
 			#If nothing usable was supplied then give an error
 			print("Invalid arguments supplied")
