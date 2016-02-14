@@ -80,21 +80,34 @@ def listAvailable(argsString):
 	try:
 		openTime = datetime.strptime(openTimes[0],'%H:%M')
 		closeTime = datetime.strptime(openTimes[1],'%H:%M')
-		if args == [''] or args == ['today']:
+		if args == [''] or 'today' in args:
 			date = datetime.today()
 		elif len(args) == 1:
-			#Use date from args
+			#Use date from args, ValueError will be made if invalid date is used
 			date = datetime.strptime(args[0],'%d/%m/%Y').date()
+		elif len(args) == 2:
+			#Just 'times' supplied, so use that and todays date
+			print("Two args")
+			date = datetime.today()
+			if args[0] == 'times':
+				openTime = datetime.strptime(getArgsBy(args[1],'-')[0],'%H:%M')
+				closeTime = datetime.strptime(getArgsBy(args[1],'-')[1],'%H:%M')
+			else:
+				print("Invalid argument '{}'  supplied, was expecting times".format(args[0]))
 		elif len(args) == 3:
 			#Use date from args and get and use time args
 			date = datetime.strptime(args[0],'%d/%m/%Y').date()
 			if args[1] == 'times':
 				openTime = datetime.strptime(getArgsBy(args[2],'-')[0],'%H:%M')
 				closeTime = datetime.strptime(getArgsBy(args[2],'-')[1],'%H:%M')
+		else:
+			#If nothing usable was supplied then give an error
+			print("Invalid arguments supplied")
+			outputs.decideWhatToDo()
 	except ValueError as e:
 		print("Error getting date: {}".format(e))
 		outputs.decideWhatToDo()
-	print(date.strftime('%Y-%m-%d'))	
+	print(date.strftime('%Y-%m-%d'))
 	cursor = conn.execute(
 		"SELECT timeStampBook FROM bookings WHERE timeStampBook LIKE ?",
 		(str(date.strftime('%Y-%m-%d'))+'%',)
