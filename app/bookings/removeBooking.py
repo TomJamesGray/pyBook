@@ -17,15 +17,17 @@ def removeWizzard(argsString):
 	
 	searchableArgs=getArgsBy(getConfPart('removeBy','bookings').strip(),',')
 	argsDict = {}
-	
+	limit=1
 	for i in range(0,len(args),2):
 		if args[i] in searchableArgs:
 			argsDict[args[i]] = args[i+1]
+		elif args[i].lower() == "limit":
+			limit = int(args[i+1])
 		else:
 			print("Invalid argument: {}".format(args[i]))
 			outputs.decideWhatToDo()
 	try:
-		if remove(argsDict):
+		if remove(argsDict,limit):
 			print("Succesfully removed booking")
 		else:
 			print("No bookings deleted")
