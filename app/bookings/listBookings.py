@@ -79,8 +79,9 @@ def listAvailable(argsString):
 	openTimes = getArgsBy(getConfPart('openTimes'),',')
 	bookingLength = getConfPart('bookingLength')
 	try:
-		openTime = datetime.strptime(openTimes[0],'%H:%M')
-		closeTime = datetime.strptime(openTimes[1],'%H:%M')
+		#Sets both variable to be equal to the original dateTime
+		openTime, absOpenTime = (datetime.strptime(openTimes[0],'%H:%M'),)*2
+		closeTime, absCloseTime = (datetime.strptime(openTimes[1],'%H:%M'),)*2
 		#If 'today' is supplied as an argument then change it to be equal to the actual date
 		if 'today' in args:
 			args = [arg.replace('today',datetime.today().strftime('%d/%m/%Y')) for arg in args]
@@ -126,9 +127,13 @@ def listAvailable(argsString):
 	bookingTimes = []
 	for i in range(0,len(bookings)):
 		#Remove date and append to booking times
-		print(i)
 		bookingTimes.append(bookings[i-1][2][11:])
 	curTime = openTime
+	if openTime <= absOpenTime:
+		openTime = absOpenTime
+	if closeTime >= absCloseTime:
+		closeTime = absCloseTime
+	
 	while curTime <= closeTime:
 		#Loop through bookings, increment 1 bookingLength at a time
 		#If it matches a booking then don't add that time to the list
