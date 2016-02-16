@@ -22,7 +22,7 @@ def wizzard(name=None, address=None):
 		customerId = helpers.getCustomerId(name,address)
 	except LookupError as e:
 		print("Lookup error: {}".format(e))
-		outputs.decideWahtToDo()
+		outputs.decideWhatToDo()
 	except sqlite3.Error as e:
 		print("Sqlite error: {}".format(e))
 		outputs.decideWhatToDo()
