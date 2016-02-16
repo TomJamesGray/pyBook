@@ -1,0 +1,16 @@
+ab   - add booking
+ac   - add customer
+lc   - lists all customers
+        - can be used with arguments in the form `lc key=value`
+        - the arguments can be seperated with commas e.g `key=value,key=value`
+lb   - lists all bookings
+        - can also be used with arguments is the same form as lc
+lba  - lists available bookings
+        - by default it will list available bookings on the same day
+        - however a date and time frame can be specified e.g
+        - `lba 1/1/1970 times=9:00-10:00`
+rb   - removes a booking
+        - arguments must be provided to specify the booking
+h    - displays this help message
+exit - exits the program
+

@@ -35,12 +35,12 @@ def decideWhatToDo():
 		decideWhatToDo()
 
 def showHelp():
-	print("ab - add booking")
-	print("ac - add customer")
-	print("lc - lists all customers")
-	print("lb - lists all bookings")
-	print("lba - lists available bookings")
-	print("rb - removes a booking")
-	print("h - displays this help message")
-	print("exit - exits the program")
+	#Read from help.txt and output it
+	print(__file__.replace('outputs.py','help.txt'))
+	try:
+		helpFile = open(__file__.replace('outputs.py','help.txt'))
+		print(helpFile.read())
+	except FileNotFoundError as e:
+		print("The help file coulnd't be found")
+		print(e)
 	decideWhatToDo()
