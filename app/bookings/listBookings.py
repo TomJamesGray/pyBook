@@ -130,7 +130,7 @@ def listAvailable(argsString):
 		bookingTimes.append(bookings[i-1][2][11:])
 	curTime = openTime
 	if openTime <= absOpenTime:
-		openTime = absOpenTime
+		curTime = absOpenTime
 	if closeTime >= absCloseTime:
 		closeTime = absCloseTime
 	
