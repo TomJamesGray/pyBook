@@ -14,6 +14,7 @@ def removeWizzard(argsString):
 	args = getArgsBy(argsString,',|=')
 	if len(args) % 2 != 0:
 		print("Insufficient arguments provided, odd number")
+		outputs.decideWhatToDo()
 	
 	searchableArgs=getArgsBy(getConfPart('removeBy','bookings').strip(),',')
 	argsDict = {}
