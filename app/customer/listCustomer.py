@@ -5,53 +5,34 @@ from tabulate import tabulate
 from app import outputs
 import sqlite3
 def list(argsString):
-	conn=dbConnection.connect()
 	# Get args
 	args = getArgsBy(argsString,',|=')
 	if args == [''] or not args:
 		try:
-			customers=conn.execute("SELECT * FROM customers")
-			print(tabulate(customers,
-				headers=['Customer id','Name','Address','Telephone'],
-				tablefmt="fancy_grid"))
+			customers = getCustomers({})
 		except sqlite3.Error as e:
-			print("Error: {}".format(e))
+			print("Sqlite error occured: {}".format(e))
 	else:
 		searchableArgs = getArgsBy(getConfPart('listBy','customers').strip(),',')
-		argsFound = 0
 		# Declare base statement then add to it if more args found
-		statement = "SELECT * FROM customers WHERE "
-		unSorted=True
-		i=0
-		vals=[]
-		while unSorted:
+		argsDict = {}
+		for i in range(0,len(args),2):
 			if args[i] in searchableArgs:
-				if argsFound >= 1:
-					statement += "AND " + args[i] + '=? '	
-				else:
-					statement += args[i] + '=? '
-				vals.append(args[i+1])
-				args.remove(args[i+1])
-				argsFound += 1
+				argsDict[args[i]] = args[i+1]
 			else:
 				print("Invalid argument: {}".format(args[i]))
 				outputs.decideWhatToDo()
-			i+=1
-			if i >= len(args):
-				unSorted = False
 		try:
-			customers=conn.execute(
-				statement,
-				vals)
-			print(tabulate(customers,
-				headers=['customerId','name','address','telephone'],
-				tablefmt="fancy_grid"))
+			customers = getCustomers(argsDict)
 		except sqlite3.Error as e:
-			print("Error: {}".format(e))	
-
+			print("Sqlite error occured: {}".format(e))
+	
+	print(tabulate(customers,
+		headers=['customerId','name','address','telephone'],
+		tablefmt="fancy_grid"))
 	# Return to start
 	outputs.decideWhatToDo()
-def getCustomer(argsDict,likeElems=[]):
+def getCustomers(argsDict,likeElems=[]):
 	#Returns a list with all the bookings matching the parameters provided in the
 	#dictionary. If no bookings are found it will return an empty list. This function
 	#doesn't check whether the parameters are allowed in the config.ini
