@@ -51,3 +51,34 @@ def list(argsString):
 
 	# Return to start
 	outputs.decideWhatToDo()
+def getCustomer(argsDict,likeElems=[]):
+	#Returns a list with all the bookings matching the parameters provided in the
+	#dictionary. If no bookings are found it will return an empty list. This function
+	#doesn't check whether the parameters are allowed in the config.ini
+	valsList = []
+	if len(argsDict) == 0:
+		statement = "SELECT * FROM customers"
+
+	else:
+		i = 0
+		statement = "SELECT * FROM customers WHERE "
+		for key,value in argsDict.items():
+			if i >= 1:
+				#If i needs to be queried by like then put 'LIKE' in statement else use normal '='
+				statement += "AND " + key +("LIKE ? " if (i in likeElems) else'=? ')
+			else:
+				statement += key + (" LIKE ? " if (i in likeElems) else"=? ")
+			valsList.append(value)
+			i += 1
+	try:
+		conn = dbConnection.connect()
+		if len(valsList) == 0:
+			cursor = conn.execute(statement)
+		else:
+			cursor = conn.execute(
+				statement,
+				valsList)
+		return cursor.fetchall()
+	except sqlite3.Error:
+		raise
+
