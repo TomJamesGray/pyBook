@@ -9,6 +9,17 @@ def getArgsBy(argString,regExp,strip=True):
 
 	return args
 
+def makeArgsDict(args,searchableArgs):
+	#Function to generate an dictinary with the arguments and values
+	#It will go through the args and make sure they're searcable as well
+	#Most likely to be used with functions that query the db
+	argsDict = {}
+	for i in range(0,len(args),2):
+		if args[i] in searchableArgs:
+			argsDict[args[i]] = args[i+1]
+		else:
+			raise ValueError("Invalid argument: {}".format(arg[i]))
+	return argsDict
 def getCustomerId(name,address=None,limit=2):
 	conn=dbConnection.connect()
 	if address == None:
