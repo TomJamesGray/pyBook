@@ -18,7 +18,7 @@ def makeArgsDict(args,searchableArgs):
 		if args[i] in searchableArgs:
 			argsDict[args[i]] = args[i+1]
 		else:
-			raise ValueError("Invalid argument: {}".format(arg[i]))
+			raise ValueError("Invalid argument: {}".format(args[i]))
 	return argsDict
 def getCustomerId(name,address=None,limit=2):
 	conn=dbConnection.connect()
