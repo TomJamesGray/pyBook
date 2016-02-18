@@ -1,5 +1,5 @@
 import sqlite3
-from app.helpers.helpers import getArgsBy
+from app.helpers.helpers import getArgsBy,makeArgsDict
 from app.helpers.getConfig import getConfPart
 from tabulate import tabulate
 from app import outputs
@@ -24,14 +24,7 @@ def listWizzard(argsString):
 		# Check the arguments are valid then put them into a dictionary to be passed
 		# to getBookings()
 		searchableArgs = getArgsBy(getConfPart('listBy','bookings').strip(),',')
-		argsDict = {}
-		# Iterate by 2 to ignore the values of the args
-		for i in range(0,len(args),2):
-			if args[i] in searchableArgs:
-				argsDict[args[i]] = args[i+1]
-			else:
-				print("Invalid argument: {}".format(args[i]))
-				outputs.decideWhatToDo()
+		argsDict = makeArgsDict(args,searchableArgs)
 		try:
 			bookings = getBookings(argsDict)
 		except sqlite3.Error as e:
