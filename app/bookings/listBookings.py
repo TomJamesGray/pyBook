@@ -8,7 +8,6 @@ from datetime import datetime,timedelta
 def listWizzard(argsString):
 	args = getArgsBy(argsString, ',|=')
 	if args == [''] or not args:
-		getBookings({})
 		try:
 			bookings = getBookings({})
 		except sqlite3.Error as e:
