@@ -58,7 +58,7 @@ def remove(argsDict,limit=1,confirm=True):
 	#Append limit +1 to check if too many results are returned
 	valsList.append(str(limit+1))
 	conn = dbConnection.connect()
-	statement = "SELECT customerId FROM bookings WHERE " + whereClause + " LIMIT ?"
+	statement = "SELECT customerId,bookingId FROM bookings WHERE " + whereClause + " LIMIT ?"
 	print(statement)
 	#print(valsList)
 	try:
@@ -100,20 +100,21 @@ def remove(argsDict,limit=1,confirm=True):
 					confirmDelete = input("(y/n): ")
 
 				if confirmDelete.lower() == "y" or (confirm==False and confrimDelete==None):
-					print("whereClause: {}HELLO \nvalsList: {}".format(whereClause,valsList))
+					bookingId = customerIds[i][1]
+					#Update where clause to just use the booking ID which is unique so only one
+					#booking can be deleted from the statement, which is what is wanted as at confirm
+					#is set to true
+					whereClause = "bookingId=?"
 					statement = "DELETE FROM bookings WHERE " + whereClause
 					print(statement)
 					#TODO - Fix limit on sqlite delete due to it having to be compiled differently, argh
 					deleteCursor = conn.execute(
 						statement,
-						valsList[:-1]
+						(str(bookingId),)
 					)
 					conn.commit()
-				elif confirmDelete.lower() == "n":
-					return False
 				else:
-					return False
-		return True
+					print("Booking not deleted")
 	except sqlite3.Error as e:
 		raise sqlite3.Error(e)
 
