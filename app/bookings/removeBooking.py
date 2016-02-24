@@ -1,5 +1,5 @@
 import sqlite3
-from app.helpers.helpers import getArgsBy,getCustomerInfoFromId
+from app.helpers.helpers import getArgsBy,getCustomerInfoFromId,makeArgsDict
 from app.helpers.getConfig import getConfPart
 from app.db import dbConnection
 from app import outputs
@@ -17,16 +17,16 @@ def removeWizzard(argsString):
 		outputs.decideWhatToDo()
 	
 	searchableArgs=getArgsBy(getConfPart('removeBy','bookings').strip(),',')
-	argsDict = {}
-	limit=1
+	#makeArgsDict includes LIMIT as an argument so that needs to be removed
+	#so it can be used properly
+	argsDict = makeArgsDict(args,searchableArgs)
 	for i in range(0,len(args),2):
-		if args[i] in searchableArgs:
-			argsDict[args[i]] = args[i+1]
-		elif args[i].lower() == "limit":
+		if args[i].lower() == "limit":
 			limit = int(args[i+1])
+			#limit is would be in argsDict so remove it
+			argsDict.pop('limit',0)
 		else:
-			print("Invalid argument: {}".format(args[i]))
-			outputs.decideWhatToDo()
+			limit = 1
 	try:
 		if remove(argsDict,limit):
 			print("Succesfully removed booking")
