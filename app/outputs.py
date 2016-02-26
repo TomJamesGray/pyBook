@@ -3,7 +3,7 @@
 import sys
 from app.helpers import getConfig
 from app.helpers.helpers import getCustomerInfoFromId
-from app.customer import addCustomer,listCustomer
+from app.customer import addCustomer,listCustomer,removeCustomer
 from app.bookings import addBooking,listBookings,removeBooking
 def welcome():
     print("Hello welcome to %s" % getConfig.getConfPart('name'))
@@ -27,6 +27,9 @@ def decideWhatToDo():
 	elif decision.lower().startswith('rb'):
 		args = decision[2:]
 		removeBooking.removeWizzard(args)
+	elif decision.lower().startswith('rc'):
+		args = decision[2:]
+		removeCustomer.removeWizzard(args)
 	elif decision.lower() == "exit":
 		sys.exit(1)
 	elif decision.lower() == "h":
