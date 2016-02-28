@@ -14,10 +14,19 @@ def removeWizzard(argsString):
         print("Insuficient arguments providied, odd number")
         outputs.decideWhatToDo()
     searchableArgs=getArgsBy(getConfPart('removeBy','customers').strip(),',')
-    argsDict = makeArgsDict(args,searchableArgs)
-
-    remove(argsDict)
-        
+    try:
+        argsDict = makeArgsDict(args,searchableArgs)
+    except ValueError as e:
+        print("Value error: {}".format(e))
+        outputs.decideWhatToDo()
+    try:
+        remove(argsDict)
+    except ValueError as e:
+        print("Value error: {}".format(e))
+    except TypeError as e:
+        print("Type error: {}".format(e))
+    except LookupError as e:
+        print("Lookup error: {}".format(e))
     outputs.decideWhatToDo()
 def remove(argsDict,limit=1,confirm=True):
     #Deletes bookings matching parameters given, if the amount of bookings matching the
@@ -84,10 +93,11 @@ def remove(argsDict,limit=1,confirm=True):
                         print(statement)
                         conn.execute(
                                 statement,
-                                str(customerIds[i][0])
+                                (str(customerIds[i][0]),)
                         )
                         conn.commit()
                 else:
                         print("Booking not deleted")
+                return 1
     except sqlite3.Error as e:
         raise sqlite3.Error(e)
