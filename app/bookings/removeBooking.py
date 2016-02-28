@@ -30,8 +30,6 @@ def removeWizzard(argsString):
     try:
         if remove(argsDict,limit):
             print("Succesfully removed booking")
-        else:
-            print("No bookings deleted")
     except ValueError as e:
         print("Value error: {}".format(e))
     except TypeError as e:
@@ -101,13 +99,13 @@ def remove(argsDict,limit=1,confirm=True):
 
                 if confirmDelete.lower() == "y" or (confirm==False and confrimDelete==None):
                     bookingId = customerIds[i][1]
-                    #Update where clause to just use the booking ID which is unique so only one
-                    #booking can be deleted from the statement, which is what is wanted as at confirm
+                    #Update where clause to just use the booking ID which is
+                    #unique so only one booking can be deleted from the
+                    #statement, which is what is wanted as at confirm
                     #is set to true
                     whereClause = "bookingId=?"
                     statement = "DELETE FROM bookings WHERE " + whereClause
                     print(statement)
-                    #TODO - Fix limit on sqlite delete due to it having to be compiled differently, argh
                     deleteCursor = conn.execute(
                         statement,
                         (str(bookingId),)
@@ -115,6 +113,7 @@ def remove(argsDict,limit=1,confirm=True):
                     conn.commit()
                 else:
                     print("Booking not deleted")
+                return 1
     except sqlite3.Error as e:
         raise sqlite3.Error(e)
 
