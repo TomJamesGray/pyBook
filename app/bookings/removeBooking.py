@@ -113,7 +113,7 @@ def remove(argsDict,limit=1,confirm=True):
                     conn.commit()
                 else:
                     print("Booking not deleted")
-                return 1
+        return 1
     except sqlite3.Error as e:
         raise sqlite3.Error(e)
 
