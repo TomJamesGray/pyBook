@@ -13,14 +13,25 @@ def removeWizzard(argsString):
     if len(args) % 2 != 0:
         print("Insuficient arguments providied, odd number")
         outputs.decideWhatToDo()
+    
     searchableArgs=getArgsBy(getConfPart('removeBy','customers').strip(),',')
     try:
+        #Remove LIMIT from argsDict
         argsDict = makeArgsDict(args,searchableArgs)
+        for i in range(0,len(args),2):
+            if args[i].lower() == "limit":
+                limit = int(args[i+1])
+                print(limit)
+                #Limit is in argsDict so remove it
+                argsDict.pop('limit',0)
+            else:
+                limit = 1
     except ValueError as e:
         print("Value error: {}".format(e))
         outputs.decideWhatToDo()
+
     try:
-        remove(argsDict)
+        remove(argsDict,limit)
     except ValueError as e:
         print("Value error: {}".format(e))
     except TypeError as e:
@@ -98,6 +109,6 @@ def remove(argsDict,limit=1,confirm=True):
                         conn.commit()
                 else:
                         print("Booking not deleted")
-                return 1
+        return 1
     except sqlite3.Error as e:
         raise sqlite3.Error(e)
